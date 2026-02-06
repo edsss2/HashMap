@@ -53,7 +53,6 @@ void add(HashMap* map, char *chave, char *valor) {
     }
 
     HashEntry* novo = malloc(sizeof(HashEntry));
-    if (!novo) return;
 
     novo->chave = chave;
     novo->valor = valor;
@@ -67,6 +66,18 @@ void add(HashMap* map, char *chave, char *valor) {
 
     map->tamanho++;
 }
+
+int update(HashMap* map, char *chave, char *valor) {
+    HashEntry* atual = percorrer_lista(map, chave);
+
+    if (atual && strcmp(atual->chave, chave) == 0) {
+        atual->valor = valor;
+        return 1;
+    }
+
+    return 0;
+}
+
 
 char* buscar(HashMap* map, char *chave) {
     HashEntry* atual = percorrer_lista(map, chave);
