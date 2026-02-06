@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "hashmap.h"
 
 HashMap hashMap = {
@@ -18,23 +21,58 @@ int hash(char *chave, int capacidade) {
     return hash % capacidade;
 }
 
-void add(HashMap* map, char *chave, char *valor) {
+HashEntry* percorrer_lista(HashMap* map, char *chave) {
     int indice = hash(chave, map->capacidade);
+    HashEntry* atual = map->tabela[indice];
 
-    map->tabela[indice].chave = chave;
-    map->tabela[indice].valor = valor;
-    if(!map->tabela[indice].chave) {
-        map->tamanho++;
+    while(atual) {
+        if(strcmp(atual->chave, chave) == 0) {
+            return atual;
+        }
+        if(!atual->proximo) {
+            return atual;
+        }
+
+        atual = atual->proximo;
+
     }
 
+    return NULL;
+}
+
+void add(HashMap* map, char *chave, char *valor) {
+    int indice = hash(chave, map->capacidade);
+    HashEntry* atual = map->tabela[indice];
+
+    while (atual) {
+        if (strcmp(atual->chave, chave) == 0) {
+            return;
+        }
+        if (!atual->proximo) break;
+        atual = atual->proximo;
+    }
+
+    HashEntry* novo = malloc(sizeof(HashEntry));
+    if (!novo) return;
+
+    novo->chave = chave;
+    novo->valor = valor;
+    novo->proximo = NULL;
+
+    if (!map->tabela[indice]) {
+        map->tabela[indice] = novo;
+    } else {
+        atual->proximo = novo;
+    }
+
+    map->tamanho++;
 }
 
 char* buscar(HashMap* map, char *chave) {
-    int indice = hash(chave, map->capacidade);
-    char* chave_tabela = map->tabela[indice].chave;
+    HashEntry* atual = percorrer_lista(map, chave);
 
-    if (chave_tabela && strcmp(chave_tabela, chave) == 0){
-            return map->tabela[indice].valor;
+    if (atual && strcmp(atual->chave, chave) == 0) {
+        return atual->valor;
     }
 
     return NULL;
@@ -42,18 +80,29 @@ char* buscar(HashMap* map, char *chave) {
 
 char* excluir(HashMap* map, char *chave) {
     int indice = hash(chave, map->capacidade);
-    char* chave_tabela = map->tabela[indice].chave;
 
-    if (!chave_tabela || strcmp(chave_tabela, chave) != 0){
-        return NULL;
+    HashEntry* atual = map->tabela[indice];
+    HashEntry* anterior = NULL;
+
+    while(atual) {
+        if(strcmp(atual->chave, chave) == 0) {
+            if(anterior) {
+                anterior->proximo = atual->proximo;
+            } else {
+                map->tabela[indice] = atual->proximo;
+            }
+
+            char* valor = atual->valor;
+            free(atual);
+            map->tamanho--;
+            return valor;
+        }
+
+        anterior = atual;
+        atual = atual->proximo;
+
     }
-
-    char* elemento = map->tabela[indice].valor;
-
-    map->tabela[indice].valor = 0;
-    map->tabela[indice].chave = 0;
-
-    return elemento;
+    return NULL;
 
 }
 

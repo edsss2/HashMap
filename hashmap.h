@@ -7,10 +7,11 @@
 typedef struct HashEntry {
     char* chave;
     char* valor;
+    struct HashEntry* proximo;
 }HashEntry;
 
 typedef struct {
-    HashEntry tabela[CAPACIDADE];
+    HashEntry *tabela[CAPACIDADE];
     size_t tamanho;
     size_t capacidade;
 }HashMap;
