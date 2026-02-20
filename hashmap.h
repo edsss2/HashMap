@@ -10,8 +10,8 @@ typedef struct HashEntry {
     struct HashEntry* proximo;
 }HashEntry;
 
-typedef struct {
-    HashEntry *tabela[CAPACIDADE];
+typedef struct HashMap{
+    HashEntry **tabela;
     size_t tamanho;
     size_t capacidade;
 }HashMap;

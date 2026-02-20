@@ -5,9 +5,9 @@
 #include "hashmap.h"
 
 HashMap hashMap = {
-    .tabela = {0},
+    .tabela = NULL,
     .tamanho = 0,
-    .capacidade = CAPACIDADE
+    .capacidade = 5
 };
 
 int hash(char *chave, int capacidade) {
@@ -38,6 +38,27 @@ HashEntry* percorrer_lista(HashMap* map, char *chave) {
     }
 
     return NULL;
+}
+
+int econtrar_proximo_primo(int n) {
+    if(n / 2 == 0){n++;}
+
+    return encontrar_primo(n, 3);
+}
+
+int encontrar_primo(int n, int primo) {
+    int resto = n % primo;
+    int quociente = n / primo;
+
+    if(resto != 0 && quociente < primo) {
+        return n;
+    }
+
+    if(primo > n) {
+        n+2;
+    }
+
+    return econtrar_primo(n, econtrar_proximo_primo(primo + 2));
 }
 
 void add(HashMap* map, char *chave, char *valor) {
