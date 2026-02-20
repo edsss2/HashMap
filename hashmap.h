@@ -16,8 +16,9 @@ typedef struct HashMap{
     size_t capacidade;
 }HashMap;
 
-int hash(char *chave, int capacidade);
-void add(HashMap* map, char *chave, char *valor);
+HashMap* criar();
+int add(HashMap* map, char *chave, char *valor);
+int atualizar(HashMap* map, char *chave, char *valor);
 char *buscar(HashMap* map, char *chave);
 char *excluir(HashMap* map, char *chave);
 

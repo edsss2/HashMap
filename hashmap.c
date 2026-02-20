@@ -4,13 +4,7 @@
 
 #include "hashmap.h"
 
-HashMap hashMap = {
-    .tabela = NULL,
-    .tamanho = 0,
-    .capacidade = 5
-};
-
-int hash(char *chave, int capacidade) {
+static int hash(char *chave, int capacidade) {
     int hash = 0;
 
     while (*chave) {
@@ -21,7 +15,7 @@ int hash(char *chave, int capacidade) {
     return hash % capacidade;
 }
 
-HashEntry* percorrer_lista(HashMap* map, char *chave) {
+static HashEntry* percorrer_lista(HashMap* map, char *chave) {
     int indice = hash(chave, map->capacidade);
     HashEntry* atual = map->tabela[indice];
 
@@ -40,13 +34,13 @@ HashEntry* percorrer_lista(HashMap* map, char *chave) {
     return NULL;
 }
 
-int econtrar_proximo_primo(int n) {
+static int encontrar_proximo_primo(int n) {
     if(n / 2 == 0){n++;}
 
     return encontrar_primo(n, 3);
 }
 
-int encontrar_primo(int n, int primo) {
+static int encontrar_primo(int n, int primo) {
     int resto = n % primo;
     int quociente = n / primo;
 
@@ -58,7 +52,21 @@ int encontrar_primo(int n, int primo) {
         n+2;
     }
 
-    return econtrar_primo(n, econtrar_proximo_primo(primo + 2));
+    return encontrar_primo(n, encontrar_proximo_primo(primo + 2));
+}
+
+static void redimensionar_tabela(HashMap* map) {
+    int nova_capacidade = encontrar_proximo_primo(map->capacidade * 2);
+}
+
+HashMap* criar() {
+    HashMap* hashMap;
+    int capacidade = 5;
+
+    hashMap = malloc(sizeof(HashMap));
+    hashMap->tabela = calloc(capacidade, sizeof(HashEntry *));
+    hashMap->tamanho = 0;
+    hashMap->capacidade = capacidade;
 }
 
 void add(HashMap* map, char *chave, char *valor) {
@@ -67,7 +75,7 @@ void add(HashMap* map, char *chave, char *valor) {
 
     while (atual) {
         if (strcmp(atual->chave, chave) == 0) {
-            return;
+            return -1;
         }
         if (!atual->proximo) break;
         atual = atual->proximo;
@@ -88,7 +96,7 @@ void add(HashMap* map, char *chave, char *valor) {
     map->tamanho++;
 }
 
-int update(HashMap* map, char *chave, char *valor) {
+int atualizar(HashMap* map, char *chave, char *valor) {
     HashEntry* atual = percorrer_lista(map, chave);
 
     if (atual && strcmp(atual->chave, chave) == 0) {
