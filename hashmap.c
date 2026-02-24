@@ -34,12 +34,6 @@ static HashEntry* percorrer_lista(HashMap* map, char *chave) {
     return NULL;
 }
 
-static int encontrar_proximo_primo(int n) {
-    if(n / 2 == 0){n++;}
-
-    return encontrar_primo(n, 3);
-}
-
 static int encontrar_primo(int n, int primo) {
     int resto = n % primo;
     int quociente = n / primo;
@@ -48,47 +42,11 @@ static int encontrar_primo(int n, int primo) {
         return n;
     }
 
-    if(primo > n) {
-        n+2;
+    if(primo == n | resto == 0) {
+        return encontrar_primo(n + 2, 3);
+    } else {
+        return encontrar_primo(n, encontrar_proximo_primo(primo + 2));
     }
-
-    return encontrar_primo(n, encontrar_proximo_primo(primo + 2));
-}
-
-    static void redimensionar_tabela(HashMap* map) {
-        int nova_capacidade, antiga_capacidade;
-        HashEntry **nova_tabela, **antiga_tabela;
-
-        nova_capacidade = encontrar_proximo_primo(map->capacidade * 2);
-        nova_tabela = calloc(nova_capacidade, sizeof(HashEntry *));
-        antiga_capacidade = map->capacidade;
-        antiga_tabela = map->tabela;
-
-        map->tabela = nova_tabela;
-        map->capacidade = nova_capacidade;
-        map->tamanho = 0;
-
-        for(int i = 0; i < antiga_capacidade; i++) {
-            if(antiga_tabela[i] != NULL) {
-                HashEntry* atual = map->tabela[i];
-                int indice = hash(atual->chave, nova_capacidade);
-
-                add(map, atual);
-            }
-        }
-
-    free(antiga_tabela);
-    
-}
-
-HashMap* criar() {
-    HashMap* hashMap;
-    int capacidade = 5;
-
-    hashMap = malloc(sizeof(HashMap));
-    hashMap->tabela = calloc(capacidade, sizeof(HashEntry *));
-    hashMap->tamanho = 0;
-    hashMap->capacidade = capacidade;
 }
 
 static int add(HashMap* map, HashEntry* entry) {
@@ -107,6 +65,44 @@ static int add(HashMap* map, HashEntry* entry) {
     map->tamanho++;
 }
 
+static void redimensionar_tabela(HashMap* map) {
+    int nova_capacidade, antiga_capacidade;
+    HashEntry **nova_tabela, **antiga_tabela;
+
+    nova_capacidade = encontrar_proximo_primo(map->capacidade * 2);
+    nova_tabela = calloc(nova_capacidade, sizeof(HashEntry *));
+    antiga_capacidade = map->capacidade;
+    antiga_tabela = map->tabela;
+
+    map->tabela = nova_tabela;
+    map->capacidade = nova_capacidade;
+    map->tamanho = 0;
+
+    for(int i = 0; i < antiga_capacidade; i++) {
+        if(antiga_tabela[i] != NULL) {
+            HashEntry* atual = map->tabela[i];
+            int indice = hash(atual->chave, nova_capacidade);
+
+            add(map, atual);
+        }
+    }
+
+    free(antiga_tabela);
+
+}
+
+HashMap* criar() {
+    HashMap* hashMap;
+    int capacidade = 5;
+
+    hashMap = malloc(sizeof(HashMap));
+    hashMap->tabela = calloc(capacidade, sizeof(HashEntry *));
+    hashMap->tamanho = 0;
+    hashMap->capacidade = capacidade;
+
+    return hashMap;
+}
+
 int inserir(HashMap* map, char *chave, char *valor) {
     int indice = hash(chave, map->capacidade);
     HashEntry* atual = map->tabela[indice];
@@ -119,7 +115,7 @@ int inserir(HashMap* map, char *chave, char *valor) {
 
     while (atual) {
         if (strcmp(atual->chave, chave) == 0) {
-            return -1;
+            return 0;
         }
         if (!atual->proximo) break;
         atual = atual->proximo;
@@ -138,6 +134,7 @@ int inserir(HashMap* map, char *chave, char *valor) {
     }
 
     map->tamanho++;
+    return 1;
 }
 
 int atualizar(HashMap* map, char *chave, char *valor) {
@@ -188,6 +185,12 @@ char* excluir(HashMap* map, char *chave) {
     }
     return NULL;
 
+}
+
+int encontrar_proximo_primo(int n) {
+    if(n % 2 == 0){n++;}
+
+    return encontrar_primo(n, 3);
 }
 
 
