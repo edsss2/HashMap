@@ -80,9 +80,8 @@ static void redimensionar_tabela(HashMap* map) {
 
     for(int i = 0; i < antiga_capacidade; i++) {
         if(antiga_tabela[i] != NULL) {
-            HashEntry* atual = map->tabela[i];
+            HashEntry* atual = antiga_tabela[i];
             int indice = hash(atual->chave, nova_capacidade);
-
             add(map, atual);
         }
     }
@@ -109,7 +108,7 @@ int inserir(HashMap* map, char *chave, char *valor) {
     //Fator de Carga
     float fc = (float) map->tamanho / map->capacidade;
 
-    if(fc > 0.75) {
+    if(fc > 0.60) {
         redimensionar_tabela(map);
     }
 
