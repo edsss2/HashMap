@@ -113,7 +113,10 @@ int inserir(HashMap* map, char *chave, char *valor) {
     }
 
     while (atual) {
+        printf("\nAtual chave: %s\n", atual->chave);
+        printf("\nChave do parametro: %s\n", chave);
         if (strcmp(atual->chave, chave) == 0) {
+            printf("\nEle entrou na atualização\n");
             return 0;
         }
         if (!atual->proximo) break;

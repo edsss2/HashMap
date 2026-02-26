@@ -38,15 +38,34 @@ int test_criar() {
 int test_inserir() {
     HashMap* hm = criar();
 
-    char* chave = "chave";
-    char* valor = "valor";
-    
-    int i = inserir(hm, chave, valor);
+    char* chave_a = "chave a";
+    char* valor_a = "valor a";
+    char* chave_b = "chave b";
+    char* valor_b = "valor b";
+    char* chave_c = "chave c";
+    char* valor_c = "valor c";
+    char* chave_d = "chave d";
+    char* valor_d = "valor d";
+
+    inserir(hm, chave_a, valor_a);
+    inserir(hm, chave_b, valor_b);
+    inserir(hm, chave_c, valor_c);
+    inserir(hm, chave_d, valor_d);
+
+    int tamanho = hm->tamanho;
+    printf("\nTamanho: %d\n", tamanho);
+    inserir(hm, chave_c, valor_d);
+
+    if(tamanho != 4) { return 0; }
+    if(hm->capacidade == 5) { return 0; }
+    printf("Tamanho atual: %zu\n", hm->tamanho);
+    if(tamanho != hm->tamanho) { return 0; }
+
 
     free(hm->tabela);
     free(hm);
 
-    return i;
+    return 1;
 }
 
 int test_atualizar() {
