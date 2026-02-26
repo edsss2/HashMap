@@ -53,13 +53,12 @@ int test_inserir() {
     inserir(hm, chave_d, valor_d);
 
     int tamanho = hm->tamanho;
-    printf("\nTamanho: %d\n", tamanho);
+
     inserir(hm, chave_c, valor_d);
 
-    if(tamanho != 4) { return 0; }
-    if(hm->capacidade == 5) { return 0; }
-    printf("Tamanho atual: %zu\n", hm->tamanho);
-    if(tamanho != hm->tamanho) { return 0; }
+    if(tamanho != 4) return 0;
+    if(hm->capacidade == 5) return 0;
+    if(tamanho != hm->tamanho) return 0;
 
 
     free(hm->tabela);
@@ -74,16 +73,21 @@ int test_atualizar() {
     char* chave = "chave";
     char* valor = "valor";
     
-    int i = inserir(hm, chave, valor);
-    if(i == 0) { return i; }
+    if(inserir(hm, chave, valor) == 0) return 0;
 
     valor = "novo valor";
-    i = atualizar(hm, chave, valor);
+    int tamanho = hm->tamanho;
+    if(atualizar(hm, chave, valor) == 0) return 0;
+    if(hm->tamanho > tamanho) return 0;
+
+    chave = "chave inexistente";
+    valor = "valor";
+    if(atualizar(hm, chave, valor) != 0) return 0;
 
     free(hm->tabela);
     free(hm);
 
-    return i;
+    return 1;
 }
 
 int test_buscar() {
@@ -101,8 +105,6 @@ int test_buscar() {
     inserir(hm, chave_a, valor_a);
     inserir(hm, chave_b, valor_b);
     inserir(hm, chave_c, valor_c);
-
-    //printf("Os valores foram inseridos!\n");
 
     int i = strcmp(buscar(hm, chave_b), valor_b);
 
@@ -129,9 +131,9 @@ int test_excluir(){
     inserir(hm, chave_c, valor_c);
 
     int i = strcmp(excluir(hm, chave_b), valor_b);
-    if(i != 0) { return 0; }
+    if(i != 0) return 0;
 
-    if(buscar(hm, chave_b) != NULL) { return 0; }
+    if(buscar(hm, chave_b) != NULL) return 0;
 
     free(hm->tabela);
     free(hm);
@@ -148,7 +150,7 @@ int test_encontrar_proximo_primo() {
     while(i < length) {
         int n = p + 1;
         p = encontrar_proximo_primo(n);
-        if(primos[i] != p) { return 0; }
+        if(primos[i] != p) return 0;
 
         i++;
     }

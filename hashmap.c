@@ -55,7 +55,7 @@ static int add(HashMap* map, HashEntry* entry) {
 
     while (atual) {
         if (strcmp(atual->chave, entry->chave) == 0) {
-            return -1;
+            return 0;
         }
         if (!atual->proximo) break;
         atual = atual->proximo;
@@ -63,6 +63,8 @@ static int add(HashMap* map, HashEntry* entry) {
 
     map->tabela[indice] = entry;
     map->tamanho++;
+
+    return 1;
 }
 
 static void redimensionar_tabela(HashMap* map) {
@@ -81,7 +83,6 @@ static void redimensionar_tabela(HashMap* map) {
     for(int i = 0; i < antiga_capacidade; i++) {
         if(antiga_tabela[i] != NULL) {
             HashEntry* atual = antiga_tabela[i];
-            int indice = hash(atual->chave, nova_capacidade);
             add(map, atual);
         }
     }
@@ -103,8 +104,6 @@ HashMap* criar() {
 }
 
 int inserir(HashMap* map, char *chave, char *valor) {
-    int indice = hash(chave, map->capacidade);
-    HashEntry* atual = map->tabela[indice];
     //Fator de Carga
     float fc = (float) map->tamanho / map->capacidade;
 
@@ -112,11 +111,11 @@ int inserir(HashMap* map, char *chave, char *valor) {
         redimensionar_tabela(map);
     }
 
+    int indice = hash(chave, map->capacidade);
+    HashEntry* atual = map->tabela[indice];
+
     while (atual) {
-        printf("\nAtual chave: %s\n", atual->chave);
-        printf("\nChave do parametro: %s\n", chave);
         if (strcmp(atual->chave, chave) == 0) {
-            printf("\nEle entrou na atualização\n");
             return 0;
         }
         if (!atual->proximo) break;
